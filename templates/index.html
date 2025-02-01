@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 0px 10px gray;
+            border-radius: 10px;
+            margin-top: 50px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+        }
+        .task {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: lightgray;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+        .completed {
+            background: lightgreen;
+        }
+        .incomplete {
+            background: lightcoral;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Habit Tracker</h1>
+        <h2>Coins: {{ coins }}</h2>
+
+        <form method="POST">
+            <input type="text" name="task" placeholder="Enter habit/task" required>
+            <input type="number" name="time" placeholder="Expected time (hours)" required>
+            <button type="submit">Add Task</button>
+        </form>
+
+        <h3>Your Tasks</h3>
+        {% for task in tasks %}
+            <div class="task {% if task.status == 'completed' %}completed{% elif task.status == 'incomplete' %}incomplete{% endif %}">
+                <span>{{ task.name }} - Planned: {{ task.time_planned }}h - Spent: {{ task.time_spent }}h</span>
+                {% if task.status == 'pending' %}
+                    <form method="POST" action="/log_time">
+                        <input type="hidden" name="task_id" value="{{ loop.index0 }}">
+                        <input type="number" name="time_spent" placeholder="Time spent (hours)" required>
+                        <button type="submit">Log Time</button>
+                    </form>
+                {% else %}
+                    <span>Status: {{ task.status }}</span>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <br><br>
+        <a href="/reset"><button>Reset Progress</button></a>
+    </div>
+</body>
+</html>
